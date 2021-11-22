@@ -1,0 +1,66 @@
+name: "Deploy Front-end"
+description: "Build and deploys a versioned front-end of an application to an AWS S3 bucket"
+inputs:
+  app-name:
+    description: "Name of application"
+    required: true
+  s3-bucket:
+    description: "Name of AWS S3 bucket"
+    required: true
+  version:
+    description: "Version to release; derived from tag name by default"
+    required: true
+    default: ${GITHUB_REF#refs/tags/}
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Validate version 👁
+      shell: bash
+      run: |
+        SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+        if [[ ! ${{ inputs.version }} =~ $SEMVER_REGEX ]];
+          echo 'Version is not Semver (https://semver.org/) compliant' 
+          exit 1
+        fi
+
+    - name: Checkout ⏬
+      uses: actions/checkout@v2
+
+    - name: Define Yarn 🧶 cache
+      id: yarn-cache
+      shell: bash
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - name: Activate Yarn 🧶 cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Set up Node ⬢
+      uses: actions/setup-node@v2
+      with:
+        node-version: "16.x"
+
+    - name: Install dependencies ⏬
+      shell: bash
+      run: yarn install --frozen-lockfile
+
+    - name: Build 💪
+      shell: bash
+      run: yarn run build
+
+    - name: Configure AWS Credentials 👮‍♀️
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+
+    - name: Copy files to S3 bucket 🔄
+      shell: bash
+      run: aws s3 sync ./dist/ s3://${{ inputs.s3-bucket }}/${{ inputs.app-name }}/${{ inputs.version }}/
