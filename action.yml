@@ -4,8 +4,18 @@ inputs:
   app-name:
     description: "Name of application"
     required: true
-  s3-bucket:
+  aws-access-key-id:
+    description: "AWS access key ID"
+    required: true
+  aws-access-key-secret:
+    description: "AWS access key secret"
+    required: true
+  aws-s3-bucket:
     description: "Name of AWS S3 bucket"
+    required: true
+  aws-region:
+    description: "AWS region for S3 bucket"
+    default: eu-west-1
     required: true
   version:
     description: "Version to release; derived from tag name by default"
@@ -57,10 +67,10 @@ runs:
     - name: Configure AWS Credentials 👮‍♀️
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-access-key-secret }}
+        aws-region: ${{ inputs.aws-region }}
 
     - name: Copy files to S3 bucket 🔄
       shell: bash
-      run: aws s3 sync ./dist/ s3://${{ inputs.s3-bucket }}/${{ inputs.app-name }}/${{ inputs.version }}/
+      run: aws s3 sync ./dist/ s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ inputs.version }}/
