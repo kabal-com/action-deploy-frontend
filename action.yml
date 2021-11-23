@@ -14,13 +14,17 @@ inputs:
     description: "Name of AWS S3 bucket"
     required: true
   aws-region:
-    description: "AWS region for S3 bucket"
     default: eu-west-1
+    description: "AWS region for S3 bucket"
+    required: true
+  built-files:
+    default: dist/
+    description: "Directory where to "
     required: true
   version:
+    default: ${GITHUB_REF#refs/tags/}
     description: "Version to release; derived from tag name by default"
     required: true
-    default: ${GITHUB_REF#refs/tags/}
 
 runs:
   using: "composite"
@@ -84,4 +88,4 @@ runs:
 
     - name: Copy files to S3 bucket 🔄
       shell: bash
-      run: aws s3 sync ./dist/ s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ steps.validate.outputs.version }}/
+      run: aws s3 sync ./${{ inputs.built-files }} s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ steps.validate.outputs.version }}/
