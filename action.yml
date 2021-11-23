@@ -30,7 +30,7 @@ runs:
       shell: bash
       run: |
         SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
-        if [[ ! ${{ inputs.version }} =~ $SEMVER_REGEX ]];
+        if [[ ! ${{ inputs.version }} =~ $SEMVER_REGEX ]]; then
           echo 'Version is not Semver (https://semver.org/) compliant' 
           exit 1
         fi
