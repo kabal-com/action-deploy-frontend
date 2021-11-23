@@ -27,13 +27,24 @@ runs:
 
   steps:
     - name: Validate version 👁
+      id: validate
       shell: bash
       run: |
-        SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
-        if [[ ! ${{ inputs.version }} =~ $SEMVER_REGEX ]]; then
-          echo 'Version is not Semver (https://semver.org/) compliant' 
+        INPUT_VERSION=${{ inputs.version }}
+
+        if [[ ! "${INPUT_VERSION:0:1}" == 'v' ]]; then
+          echo "Version does not start with 'v'; stopping"
           exit 1
         fi
+
+        SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+
+        if [[ ! "${INPUT_VERSION:1}" =~ $SEMVER_REGEX ]]; then
+          echo "Version \"${INPUT_VERSION:1}\" is not SemVer compliant; see https://semver.org/"
+          exit 1
+        fi
+
+        echo "::set-output name=version::${INPUT_VERSION:1}"
 
     - name: Checkout ⏬
       uses: actions/checkout@v2
@@ -73,4 +84,4 @@ runs:
 
     - name: Copy files to S3 bucket 🔄
       shell: bash
-      run: aws s3 sync ./dist/ s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ inputs.version }}/
+      run: aws s3 sync ./dist/ s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ steps.validate.outputs.version }}/
