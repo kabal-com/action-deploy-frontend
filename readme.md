@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Build and deploy 🚀
-        uses: kabal-com/action-deploy-frontend@v5
+        uses: kabal-com/action-deploy-frontend@v6
         with:
           app-name: <YOUR-APP-NAME>
           aws-access-key-id: ${{ secrets.<SOME-SECRET-KEY-ID> }}
