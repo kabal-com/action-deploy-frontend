@@ -19,7 +19,11 @@ inputs:
     required: true
   built-files:
     default: dist/
-    description: "Directory where to "
+    description: "Directory where to find files to deploy once the project builds"
+    required: true
+  project-dir:
+    default: .
+    description: "Path to the front-end project, where package.json is located"
     required: true
   version:
     default: ${GITHUB_REF#refs/tags/}
