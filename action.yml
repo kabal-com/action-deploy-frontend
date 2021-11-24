@@ -77,7 +77,7 @@ runs:
 
     - name: Install dependencies ⏬
       shell: bash
-      run: yarn install --frozen-lockfile
+      run: cd ${{ inputs.project-dir }} && yarn install --frozen-lockfile
 
     - name: Build 💪
       shell: bash
