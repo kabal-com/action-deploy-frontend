@@ -43,3 +43,12 @@ Some optional input keys:
 - `version`: A version to label the deployment with. This should be the letter `v` followed by a SemVer-compliant version string, e.g. `v1.2.3` or `v2.0.0-beta`. Defaults to the tag name being pushed. Don't change this unless you know what you're doing
 
 The built files are placed in the S3 bucket under `/<YOUR-APP-NAME>/<version>/`.
+
+## Deployment
+
+To deploy a new version of this action:
+
+- Ensure all changes are committed
+- Run `git tag v<NEW_VERSION>`
+- Push changes with tags `git push --tags`
+- Update other projects' actions to make use of new version

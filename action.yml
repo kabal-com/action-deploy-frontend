@@ -57,6 +57,10 @@ runs:
     - name: Checkout ⏬
       uses: actions/checkout@v2
 
+    - name: Move to project directory 📂
+      shell: bash
+      run: cd ${{ inputs.project-dir }}
+
     - name: Set up Node ⬢
       uses: actions/setup-node@v2
       with:
@@ -65,7 +69,7 @@ runs:
 
     - name: Install dependencies ⏬
       shell: bash
-      run: cd ${{ inputs.project-dir }} && yarn install --frozen-lockfile --ignore-scripts
+      run: yarn install --frozen-lockfile --ignore-scripts
 
     - name: Build 💪
       shell: bash
