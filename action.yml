@@ -61,6 +61,7 @@ runs:
       uses: actions/setup-node@v2
       with:
         cache: "yarn"
+        cache-dependency-path: "${{ inputs.project-dir }}/yarn.lock"
         node-version: "16.x"
 
     - name: Install dependencies ⏬
