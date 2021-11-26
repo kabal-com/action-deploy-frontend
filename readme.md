@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Build and deploy 🚀
-        uses: kabal-com/action-deploy-frontend@v6
+        uses: kabal-com/action-deploy-frontend@v11
         with:
           app-name: <YOUR-APP-NAME>
           aws-access-key-id: ${{ secrets.<SOME-SECRET-KEY-ID> }}
@@ -49,6 +49,6 @@ The built files are placed in the S3 bucket under `/<YOUR-APP-NAME>/<version>/`.
 To deploy a new version of this action:
 
 - Ensure all changes are committed
-- Run `git tag v<NEW_VERSION>`
-- Push changes with tags `git push --tags`
+- Run `git tag v<NEW_VERSION> -am "Version <NEW_VERSION>"`
+- Push changes with tags `git push --follow-tags`
 - Update other projects' actions to make use of new version

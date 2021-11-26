@@ -19,7 +19,7 @@ inputs:
     required: true
   built-files:
     default: dist/
-    description: "Directory where to find files to deploy once the project builds"
+    description: "Directory where to find files to deploy once the project builds (relative to project-dir)"
     required: true
   project-dir:
     default: .
@@ -57,10 +57,6 @@ runs:
     - name: Checkout ⏬
       uses: actions/checkout@v2
 
-    - name: Move to project directory 📂
-      shell: bash
-      run: cd ${{ inputs.project-dir }}
-
     - name: Set up Node ⬢
       uses: actions/setup-node@v2
       with:
@@ -69,11 +65,11 @@ runs:
 
     - name: Install dependencies ⏬
       shell: bash
-      run: yarn install --frozen-lockfile --ignore-scripts
+      run: cd ${{ inputs.project-dir }} && yarn install --frozen-lockfile --ignore-scripts
 
     - name: Build 💪
       shell: bash
-      run: yarn run build
+      run: cd ${{ inputs.project-dir }} && yarn run build
 
     - name: Configure AWS Credentials 👮‍♀️
       uses: aws-actions/configure-aws-credentials@v1
@@ -84,4 +80,4 @@ runs:
 
     - name: Copy files to S3 bucket 🔄
       shell: bash
-      run: aws s3 sync ./${{ inputs.built-files }} s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ steps.validate.outputs.version }}/
+      run: aws s3 sync ${{ inputs.project-dir }}/${{ inputs.built-files }} s3://${{ inputs.aws-s3-bucket }}/${{ inputs.app-name }}/${{ steps.validate.outputs.version }}/
