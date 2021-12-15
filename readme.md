@@ -7,6 +7,12 @@ Assumptions:
 - Your application uses Yarn
 - The `build` script in `package.json` builds the project for production
 
+## Overview
+
+How this project fits in the big picture:
+
+![Overview of front-end systems](./diagram-action.svg "Diagram")
+
 ## Setting up
 
 In your project, create a new workflow file in `/.github/` (e.g. `/.github/release.yml`) and populate it with this:
@@ -44,11 +50,13 @@ Some optional input keys:
 
 The built files are placed in the S3 bucket under `/<YOUR-APP-NAME>/<version>/`.
 
-## Deployment
+## Development
+
+### Deployment
 
 To deploy a new version of this action:
 
 - Ensure all changes are committed
 - Run `git tag v<NEW_VERSION> -am "Version <NEW_VERSION>"`
 - Push changes with tags `git push --follow-tags`
-- Update other projects' actions to make use of new version
+- Update other projects' actions to make use of the new version
